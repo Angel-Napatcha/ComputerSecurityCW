@@ -192,3 +192,60 @@ body.loggedin {
     padding: 5px;
     margin: 0 0 10px 0;
 }
+
+.reset-password {
+    width: 400px;
+    background-color: #ffffff;
+    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+    margin: 100px auto;
+    text-align: center;
+}
+
+.reset-password h2 {
+    text-align: center;
+    color: #5b6574;
+    font-size: 24px;
+    padding: 20px 0 20px 0;
+    border-bottom: 1px solid #dee0e4;
+}
+
+.reset-password form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.reset-password label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    color: #3274d6;
+    font-weight: bold;
+}
+
+.reset-password input[type="password"], .reset-password input[type="text"], .reset-password input[type="email"] {
+    width: 310px;
+    height: 50px;
+    border: 1px solid #dee0e4;
+    margin-bottom: 20px;
+    padding: 0 15px;
+}
+
+.reset-password button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    background-color: #3274d6;
+    border: 0;
+    cursor: pointer;
+    font-weight: bold;
+    color: #ffffff;
+    transition: background-color 0.2s;
+}
+
+.reset-password button[type="submit"]:hover {
+    background-color: #2868c7;
+    transition: background-color 0.2s;
+}

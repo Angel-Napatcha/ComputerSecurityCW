@@ -24,7 +24,7 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
 
     // Check if the username exists
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $password, $activation_token, $dbFailedAttempts, $lockedUntil);
+        $stmt->bind_result($id, $password, $activation_token, $failedAttempts, $lockedUntil);
         $stmt->fetch();
 
         // Check if the user is locked out
@@ -64,7 +64,7 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
                 echo 'Incorrect password!<br>';
 
                 // Increment and update failed login attempts
-                $failedAttempts = $dbFailedAttempts + 1;
+                $failedAttempts = $failedAttempts + 1;
                 $updateStmt = $con->prepare("UPDATE accounts SET failed_attempts = ?, locked_until = NULL WHERE id = ?");
                 $updateStmt->bind_param('ii', $failedAttempts, $id);
                 $updateStmt->execute();
