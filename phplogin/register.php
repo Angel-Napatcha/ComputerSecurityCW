@@ -28,8 +28,15 @@ if (preg_match('/^[a-zA-Z0-9]+$/', $_POST['username']) == 0) {
     exit('Username is not valid!');
 }
 
-if (strlen($_POST['password']) > 20 || strlen($_POST['password']) < 5) {
-    exit('Password must be between 5 and 20 characters long!');
+$password = $_POST['password'];
+if (
+    strlen($password) < 8 ||
+    !preg_match('/[A-Z]/', $password) || // At least one uppercase letter
+    !preg_match('/[a-z]/', $password) || // At least one lowercase letter
+    !preg_match('/\d/', $password) ||    // At least one number
+    !preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password) // At least one special character
+) {
+    exit('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
 }
 
 if (!preg_match('/^[0-9]{11}$/', $_POST['telephone_no'])) {
@@ -51,7 +58,7 @@ $check_stmt->close();
 
 // PHPMailer configuration
 $mail = new PHPMailer(true);
-$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+$mail->SMTPDebug = 0;
 $mail->isSMTP();
 $mail->Host = 'smtp.gmail.com';
 $mail->SMTPAuth = true;
@@ -62,12 +69,12 @@ $mail->Port = 587;
 
 $from = 'noreply@yourdomain.com';
 $subject = 'Account Activation Required';
-$mail->setFrom($from, 'lovejoy-antique.com');
+$mail->setFrom($from, 'Lovejoy-Antique.com');
 $mail->addAddress($_POST['email']);
 $mail->isHTML(true);
 
 // Insert user data into the database
-if ($stmt = $con->prepare('INSERT INTO accounts (username, password, email, telephone_no, activation_code) VALUES (?, ?, ?, ?, ?)')) {
+if ($stmt = $con->prepare('INSERT INTO accounts (username, password, email, telephone_no, activation_token, activation_expires) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 1 MINUTE)')) {
     // We do not want to expose passwords in our database, so hash the password and use password_verify when a user logs in.
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $token = bin2hex(random_bytes(16));
@@ -78,8 +85,8 @@ if ($stmt = $con->prepare('INSERT INTO accounts (username, password, email, tele
     $stmt->close();
 
     // Send verification email
-    $activate_link = 'http://localhost/phplogin/activate.php?email=' . $_POST['email'] . '&code=' . $token;
-    $message = '<p>Please click the following link to activate your account: <a href="' . $activate_link . '">' . $activate_link . '</a></p>';
+    $activatation_link = 'http://localhost/phplogin/activate.php?email=' . $_POST['email'] . '&token=' . $token;
+    $message = '<p>Please click the following link to activate your account: <a href="' . $activatation_link . '">' . $activatation_link . '</a></p>';
     $mail->Subject = $subject;
     $mail->Body = $message;
 

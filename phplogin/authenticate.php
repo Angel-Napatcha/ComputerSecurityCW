@@ -21,18 +21,18 @@ if (!isset($_POST['username'], $_POST['password'])) {
     exit('Please fill both the username and password fields!');
 }
 
-if ($stmt = $con->prepare('SELECT id, password, activation_code FROM accounts WHERE username = ?')) {
+if ($stmt = $con->prepare('SELECT id, password, activation_token FROM accounts WHERE username = ?')) {
     // Bind parameters (s = string)
     $stmt->bind_param('s', $_POST['username']);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $password, $activation_code);
+        $stmt->bind_result($id, $password, $activation_token);
         $stmt->fetch();
 
         // Check if the account is activated
-        if ($activation_code === 'activated') {
+        if ($activation_token === 'activated') {
 
             // Now verify the password.
             if (password_verify($_POST['password'], $password)) {

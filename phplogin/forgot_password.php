@@ -41,7 +41,7 @@ $check_stmt->close();
 
 // PHPMailer configuration
 $mail = new PHPMailer(true);
-$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+$mail->SMTPDebug = 0;
 $mail->isSMTP();
 $mail->Host = 'smtp.gmail.com';
 $mail->SMTPAuth = true;
@@ -56,8 +56,8 @@ $subject = 'Password Reset';
 // Generate a unique token
 $token = bin2hex(random_bytes(16));
 
-// Update the user's token in the database
-$update_token_stmt = $con->prepare('UPDATE accounts SET reset_token = ? WHERE id = ?');
+// Update the user's token and expiration time in the database
+$update_token_stmt = $con->prepare('UPDATE accounts SET reset_token = ?, reset_expires = CURRENT_TIMESTAMP + INTERVAL 1 MINUTE WHERE id = ?');
 $update_token_stmt->bind_param('si', $token, $user_id);
 $update_token_stmt->execute();
 $update_token_stmt->close();
