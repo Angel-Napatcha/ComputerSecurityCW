@@ -28,16 +28,16 @@ if (preg_match('/^[a-zA-Z0-9]+$/', $_POST['username']) == 0) {
     exit('Username is not valid!');
 }
 
-$password = $_POST['password'];
-if (
-    strlen($password) < 8 ||
-    !preg_match('/[A-Z]/', $password) || // At least one uppercase letter
-    !preg_match('/[a-z]/', $password) || // At least one lowercase letter
-    !preg_match('/\d/', $password) ||    // At least one number
-    !preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password) // At least one special character
-) {
-    exit('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
-}
+// $password = $_POST['password'];
+// if (
+//     strlen($password) < 8 ||
+//     !preg_match('/[A-Z]/', $password) || // At least one uppercase letter
+//     !preg_match('/[a-z]/', $password) || // At least one lowercase letter
+//     !preg_match('/\d/', $password) ||    // At least one number
+//     !preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password) // At least one special character
+// ) {
+//     exit('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
+// }
 
 if (!preg_match('/^[0-9]{11}$/', $_POST['telephone_no'])) {
     exit('Phone number is not valid!');
@@ -74,7 +74,7 @@ $mail->addAddress($_POST['email']);
 $mail->isHTML(true);
 
 // Insert user data into the database
-if ($stmt = $con->prepare('INSERT INTO accounts (username, password, email, telephone_no, activation_token, activation_expires) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 1 MINUTE)')) {
+if ($stmt = $con->prepare('INSERT INTO accounts (username, password, email, telephone_no, activation_token, activation_expires) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 30 MINUTE)')) {
     // We do not want to expose passwords in our database, so hash the password and use password_verify when a user logs in.
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $token = bin2hex(random_bytes(16));
