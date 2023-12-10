@@ -75,7 +75,7 @@ if (isset($_GET['email'], $_GET['token'])) {
                 $updateStmt = $con->prepare('UPDATE accounts SET activation_token = ?, activation_expires = NULL WHERE email = ? AND activation_token = ?');
                 $updateStmt->bind_param('sss', $newToken, $_GET['email'], $activationToken);
                 $updateStmt->execute();
-                echo 'Your account is now activated. You can now <a href="index.html">login</a>!';
+                echo 'Your account is now activated. You can now <a href="index.php">login</a>!';
             } else {
                 echo 'The activation link has expired. ';
                 echo '<a href="?email=' . $_GET['email'] . '&resend=true">Click here</a> to resend the activation link.';

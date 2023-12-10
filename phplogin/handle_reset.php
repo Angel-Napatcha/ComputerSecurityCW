@@ -12,11 +12,27 @@ $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
 $DATABASE_NAME = 'phplogin';
 
+$secretKey = '6LdGDiwpAAAAAKaL68Q7TouTZP62BVUTqRK7H21d';
+$recaptchaResponse = $_POST['g-recaptcha-response'];
+
 // Try and connect using the info above.
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
 
 if (mysqli_connect_errno()) {
     exit('Failed to connect to MySQL: ' . mysqli_connect_error());
+}
+
+if (isset($recaptchaResponse) && !empty($recaptchaResponse)){
+    $verificationUrl = 'https://www.google.com/recaptcha/api/siteverify';
+    $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $recaptchaResponse;
+    $response = file_get_contents($url);
+    $recaptchaResult = json_decode($response);
+
+    if (!$recaptchaResult->success){
+        exit('reCAPTCHA verification failed. Please try again.');
+    }
+} else {
+    exit('reCAPTCHA response is missing.');
 }
 
 // Function to resend reset password link
@@ -67,21 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Validate password entropy
-    $newPassword = $_POST['confirm_password'];
-    if (
-        strlen($newPassword) < 8 ||
-        !preg_match('/[A-Z]/', $newPassword) || // At least one uppercase letter
-        !preg_match('/[a-z]/', $newPassword) || // At least one lowercase letter
-        !preg_match('/\d/', $newPassword) ||    // At least one number
-        !preg_match('/[!@#$%^&*(),.?":{}|<>]/', $newPassword) // At least one special character
-    ) {
-        // Provide an error message and terminate the script
-        exit('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
-    }
-
     // Hash the new password before updating
-    $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+    $newPasswordHash = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
 
     // Retrieve the reset token and its expiration time
     $selectStmt = $con->prepare('SELECT reset_token, reset_expires FROM accounts WHERE email = ? AND reset_token = ?');
@@ -108,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo 'Error: ' . $updateStmt->error;
             } else {
                 // Provide a success message if the update was successful
-                echo 'Password reset successful. You can now <a href="index.html">login</a>!';
+                echo 'Password reset successful. You can now <a href="index.php">login</a>!';
             }
 
             // Close the update statement

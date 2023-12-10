@@ -6,71 +6,51 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
-</head>
-<body>
-    <div class="reset-password">
-        <h2>Reset Password</h2>
-        <form action="handle_reset.php" method="post" onsubmit="return validatePassword()" autocomplete="off">
-            <input type="hidden" name="email" value="<?php echo htmlspecialchars($_GET['email']); ?>">
-            <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']); ?>">
-            <label for="new_password">New Password:</label>
-            <input type="password" id="new_password" name="new_password" oninput="updatePasswordStrength()" required>
-            <div id="strength-text"></div>
-            <label for="confirm_password">Confirm Password:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
-            <!-- Display error message if passwords don't match -->
-            <?php if (isset($_GET['error']) && $_GET['error'] == 'nomatch') : ?>
-                <p class="error">Passwords do not match</p>
-            <?php endif; ?>
-            <button type="submit">Reset Password</button>
-        </form>
-    </div>
-</body>
+    <script src="https://www.google.com/recaptcha/api.js" ></script>
+    <script>
+        // Function to update password strength in real-time
+        function updatePasswordStrength() {
+            var password = document.getElementById('new_password').value;
+            var strengthText = document.getElementById('strength-text');
+            var passwordInput = document.getElementById('new_password');
 
-<script>
-    // Function to update password strength in real-time
-    function updatePasswordStrength() {
-        var password = document.getElementById('new_password').value;
-        var strengthText = document.getElementById('strength-text');
-        var passwordInput = document.getElementById('new_password');
+            // Use zxcvbn for password strength estimation
+            var result = zxcvbn(password);
 
-        // Use zxcvbn for password strength estimation
-        var result = zxcvbn(password);
+            // Display zxcvbn feedback
+            strengthText.textContent = result.feedback.suggestions.join(', ');
 
-        // Display zxcvbn feedback
-        strengthText.textContent = result.feedback.suggestions.join(', ');
+            // Set color and text based on zxcvbn score
+            switch (result.score) {
+                case 0:
+                case 1:
+                    passwordInput.style.border = '2px solid red';
+                    strengthText.style.color = 'red';
+                    strengthText.textContent = 'Weak: ' + strengthText.textContent;
+                    break;
+                case 2:
+                    passwordInput.style.border = '2px solid orange';
+                    strengthText.style.color = 'orange';
+                    strengthText.textContent = 'Moderate: Consider adding a mix of uppercase letters, numbers, and symbols for additional security.';
+                    break;
+                case 3:
+                    passwordInput.style.border = '2px solid orange';
+                    strengthText.style.color = 'orange';
+                    strengthText.textContent = 'Moderate: Good job! Consider adding a mix of uppercase letters, numbers, and symbols for additional security.';
+                    break;
+                case 4:
+                    passwordInput.style.border = '2px solid green';
+                    strengthText.style.color = 'green';
+                    strengthText.textContent = 'Strong: Excellent! Your password meets the highest standards of security.';
+                    break;
+            }
 
-        // Set color and text based on zxcvbn score
-        switch (result.score) {
-            case 0:
-            case 1:
-                passwordInput.style.border = '2px solid red';
-                strengthText.style.color = 'red';
-                strengthText.textContent = 'Weak: ' + strengthText.textContent;
-                break;
-            case 2:
-                passwordInput.style.border = '2px solid orange';
-                strengthText.style.color = 'orange';
-                strengthText.textContent = 'Moderate: Consider adding a mix of uppercase letters, numbers, and symbols for additional security.';
-                break;
-            case 3:
-                passwordInput.style.border = '2px solid orange';
-                strengthText.style.color = 'orange';
-                strengthText.textContent = 'Moderate: Good job! Consider adding a mix of uppercase letters, numbers, and symbols for additional security.';
-                break;
-            case 4:
-                passwordInput.style.border = '2px solid green';
-                strengthText.style.color = 'green';
-                strengthText.textContent = 'Strong: Excellent! Your password meets the highest standards of security.';
-                break;
+            // Apply styles to the strength text
+            strengthText.style.textAlign = 'center';
+            strengthText.style.fontSize = '14px';
+            strengthText.style.padding = '10px';
+            strengthText.style.marginBottom = '20px';
         }
-
-        // Apply styles to the strength text
-        strengthText.style.textAlign = 'center';
-        strengthText.style.fontSize = '14px';
-        strengthText.style.padding = '10px';
-        strengthText.style.marginBottom = '20px';
-    }
 
     // Add an event listener to the password input to update strength in real-time
     document.getElementById('new_password').addEventListener('input', updatePasswordStrength);
@@ -87,6 +67,51 @@
 
         return true; // Allow form submission
     }
-</script>
 
+    function validateForm() {
+            var form = document.getElementById('reset_password');
+            var requiredFields = form.querySelectorAll('[required]');
+
+            // Check if any required field is empty
+            for (var i = 0; i < requiredFields.length; i++) {
+                if (!requiredFields[i].value) {
+                    // Display the default browser behavior for required fields
+                    requiredFields[i].reportValidity();
+                    return false; // Prevent form submission
+                }
+            }
+
+            return validatePassword(); // Proceed with custom password validation
+        }
+
+    function onSubmit(token) {
+        if (validateForm()) {
+            document.getElementById("reset_password").submit();
+        }
+    }
+    </script>
+
+</head>
+<body>
+    <div class="reset-password">
+        <h2>Reset Password</h2>
+        <form form id="reset_password" action="handle_reset.php" method="post" onsubmit="return validatePassword()" autocomplete="off">
+            <input type="hidden" name="email" value="<?php echo htmlspecialchars($_GET['email']); ?>">
+            <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']); ?>">
+            <label for="new_password">New Password:</label>
+            <input type="password" id="new_password" name="new_password" oninput="updatePasswordStrength()" required>
+            <div id="strength-text"></div>
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+            <!-- Display error message if passwords don't match -->
+            <?php if (isset($_GET['error']) && $_GET['error'] == 'nomatch') : ?>
+                <p class="error">Passwords do not match</p>
+            <?php endif; ?>
+            <button type="submit" class="g-recaptcha"
+                data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
+                data-callback='onSubmit'
+                data-action='submit'>Reset Password</button>
+        </form>
+    </div>
+</body>
 </html>

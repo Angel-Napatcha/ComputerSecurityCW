@@ -7,6 +7,9 @@ $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
 $DATABASE_NAME = 'phplogin';
 
+$secretKey = '6LdGDiwpAAAAAKaL68Q7TouTZP62BVUTqRK7H21d';
+$recaptchaResponse = $_POST['g-recaptcha-response'];
+
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
 
 if (mysqli_connect_errno()) {
@@ -15,6 +18,19 @@ if (mysqli_connect_errno()) {
 
 if (!isset($_POST['username'], $_POST['password'])) {
     exit('Please fill both the username and password fields!');
+}
+
+if (isset($recaptchaResponse) && !empty($recaptchaResponse)){
+    $verificationUrl = 'https://www.google.com/recaptcha/api/siteverify';
+    $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $recaptchaResponse;
+    $response = file_get_contents($url);
+    $recaptchaResult = json_decode($response);
+
+    if (!$recaptchaResult->success){
+        exit('reCAPTCHA verification failed. Please try again.');
+    }
+} else {
+    exit('reCAPTCHA response is missing.');
 }
 
 if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempts, locked_until FROM accounts WHERE username = ?')) {
@@ -38,7 +54,7 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
                 exit('You are temporarily locked out. Please try again later.');
             } else {
                 // Unlock the user
-                unset($_SESSION['locked_until']);
+                $_SESSION['locked_until'] = null;  // Set to null instead of unsetting
             }
         }
 
@@ -46,10 +62,13 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
         if ($activation_token === 'activated') {
             // Account is not locked, verify the password.
             if (password_verify($_POST['password'], $password)) {
+                // Verification success! User has logged-in!
+                // Create sessions, so we know the user is logged in, they basically act like cookies but remember the data on the server.
                 session_regenerate_id();
-                $_SESSION['loggedin'] = true;
+                $_SESSION['loggedin'] = TRUE;
                 $_SESSION['name'] = $_POST['username'];
                 $_SESSION['id'] = $id;
+                header('Location: home.php');
 
                 // Reset failed attempts on successful login
                 $updateStmt = $con->prepare("UPDATE accounts SET failed_attempts = 0 WHERE id = ?");
@@ -58,7 +77,6 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
                 $updateStmt->close();
 
                 header('Location: home.php');
-                exit(); // Important: stop further script execution after redirection
             } else {
                 // Incorrect password
                 echo 'Incorrect password!<br>';
@@ -93,7 +111,7 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
 
     $stmt->close();
 } else {
-    echo 'Could not prepare statement!<br>';
+    echo 'Could not prepare statement! Error: ' . $con->error;
 }
 
 $con->close();

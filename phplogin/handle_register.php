@@ -13,11 +13,27 @@ $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
 $DATABASE_NAME = 'phplogin';
 
+$secretKey = '6LdGDiwpAAAAAKaL68Q7TouTZP62BVUTqRK7H21d';
+$recaptchaResponse = $_POST['g-recaptcha-response'];
+
 // Try and connect using the info above.
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
 if (mysqli_connect_errno()) {
     // If there is an error with the connection, stop the script and display the error.
     exit('Failed to connect to MySQL: ' . mysqli_connect_error());
+}
+
+if (isset($recaptchaResponse) && !empty($recaptchaResponse)){
+    $verificationUrl = 'https://www.google.com/recaptcha/api/siteverify';
+    $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $recaptchaResponse;
+    $response = file_get_contents($url);
+    $recaptchaResult = json_decode($response);
+
+    if (!$recaptchaResult->success){
+        exit('reCAPTCHA verification failed. Please try again.');
+    }
+} else {
+    exit('reCAPTCHA response is missing.');
 }
 
 if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
@@ -27,17 +43,6 @@ if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 if (preg_match('/^[a-zA-Z0-9]+$/', $_POST['username']) == 0) {
     exit('Username is not valid!');
 }
-
-// $password = $_POST['password'];
-// if (
-//     strlen($password) < 8 ||
-//     !preg_match('/[A-Z]/', $password) || // At least one uppercase letter
-//     !preg_match('/[a-z]/', $password) || // At least one lowercase letter
-//     !preg_match('/\d/', $password) ||    // At least one number
-//     !preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password) // At least one special character
-// ) {
-//     exit('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
-// }
 
 if (!preg_match('/^[0-9]{11}$/', $_POST['telephone_no'])) {
     exit('Phone number is not valid!');
