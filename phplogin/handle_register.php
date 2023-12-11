@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -91,13 +93,16 @@ $mail->addAddress($_POST['email']);
 $mail->isHTML(true);
 
 // Insert user data into the database
-if ($stmt = $con->prepare('INSERT INTO accounts (username, email, telephone_no, password, activation_token, activation_expires, admin) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 30 MINUTE, ?)')) {
+if ($stmt = $con->prepare('INSERT INTO accounts (username, email, telephone_no, password, security_question, security_answer, activation_token, activation_expires, admin) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 30 MINUTE, ?)')) {
     // We do not want to expose passwords in our database, so hash the password and use password_verify when a user logs in.
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $securityQuestion = $_POST['security_question'];
+    $securityAnswer = password_hash($_POST['security_answer'], PASSWORD_DEFAULT);
+
     $token = bin2hex(random_bytes(16));
-    $isAdmin = ($_POST['username'] === 'admin') ? true : false;
+    $isAdmin = ($_POST['username'] === 'Admin') ? true : false;
     
-    $stmt->bind_param('sssssi', $_POST['username'], $_POST['email'], $_POST['telephone_no'], $password, $token, $isAdmin);
+    $stmt->bind_param('sssssssi', $_POST['username'], $_POST['email'], $_POST['telephone_no'], $password, $securityQuestion, $securityAnswer, $token, $isAdmin);
     $stmt->execute();
 
     // Close the statement

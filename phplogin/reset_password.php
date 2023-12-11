@@ -49,26 +49,26 @@
             strengthText.style.textAlign = 'center';
             strengthText.style.fontSize = '14px';
             strengthText.style.padding = '10px';
-            strengthText.style.marginBottom = '30px';
+            strengthText.style.marginTop = '10px';
         }
 
-    // Add an event listener to the password input to update strength in real-time
-    document.getElementById('new_password').addEventListener('input', updatePasswordStrength);
+        // Add an event listener to the password input to update strength in real-time
+        document.getElementById('new_password').addEventListener('input', updatePasswordStrength);
 
-    function validatePassword() {
-        var password = document.getElementById('new_password').value;
-        var result = zxcvbn(password);
+        function validatePassword() {
+            var password = document.getElementById('new_password').value;
+            var result = zxcvbn(password);
 
-        // Check if password strength is strong (score 4)
-        if (result.score < 3) {
-            alert('Please choose a stronger password.');
-            return false; // Prevent form submission
+            // Check if password strength is strong (score 4)
+            if (result.score < 3) {
+                alert('Please choose a stronger password.');
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
         }
 
-        return true; // Allow form submission
-    }
-
-    function validateForm() {
+        function validateForm() {
             var form = document.getElementById('reset_password');
             var requiredFields = form.querySelectorAll('[required]');
 
@@ -84,18 +84,41 @@
             return validatePassword(); // Proceed with custom password validation
         }
 
-    function onSubmit(token) {
-        if (validateForm()) {
-            document.getElementById("reset_password").submit();
+        function onSubmit(token) {
+            if (validateForm()) {
+                document.getElementById("reset_password").submit();
+            }
         }
-    }
     </script>
-
 </head>
 <body>
     <div class="reset-password">
         <h2>Reset Password</h2>
-        <form form id="reset_password" action="handle_reset.php" method="post" onsubmit="return validatePassword()" autocomplete="off">
+        <form id="reset_password" action="handle_reset.php" method="post" onsubmit="return validatePassword()" autocomplete="off">
+        <?php
+            // Include your database connection code
+            $DATABASE_HOST = '127.0.0.1';
+            $DATABASE_USER = 'root';
+            $DATABASE_PASS = '';
+            $DATABASE_NAME = 'phplogin';
+
+            // Try and connect using the info above.
+            $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+
+            if (mysqli_connect_errno()) {
+                exit('Failed to connect to MySQL: ' . mysqli_connect_error());
+            }
+
+            // Fetch the security question based on the user's email
+            $email = $_GET['email'];
+            $stmt = $con->prepare('SELECT security_question FROM accounts WHERE email = ?');
+            $stmt->bind_param('s', $email);
+            $stmt->execute();
+            $stmt->bind_result($securityQuestion);
+            $stmt->fetch();
+            $stmt->close();
+            ?>
+            
             <input type="hidden" name="email" value="<?php echo htmlspecialchars($_GET['email']); ?>">
             <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']); ?>">
             <label for="new_password">New Password:</label>
@@ -107,6 +130,21 @@
             <?php if (isset($_GET['error']) && $_GET['error'] == 'nomatch') : ?>
                 <p class="error">Passwords do not match</p>
             <?php endif; ?>
+
+            <!-- Print the chosen question from the security_question column -->
+            <?php
+            if (isset($securityQuestion)) {
+                echo '<div class="security-question">';
+                echo '<p class="question-label">Security Question:</p>';
+                echo '<p class="question-text">' . htmlspecialchars($securityQuestion) . '</p>';
+                echo '</div>';
+            }
+            ?>
+
+            <!-- Add textfield for the answer to the security question -->
+            <label for="security_answer">Security Answer:</label>
+            <input type="text" id="security_answer" name="security_answer" required>
+
             <button type="submit" class="g-recaptcha"
                 data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
                 data-callback='onSubmit'

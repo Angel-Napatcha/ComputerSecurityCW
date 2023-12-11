@@ -58,7 +58,7 @@ session_regenerate_id(true);
             if ($result) {
                 // Output table header
                 echo '<table class="custom-table">';
-                echo '<tr><th>ID</th><th>Object Details</th><th>Contact Method</th><th>Contact Method</th><th>Image</th><th>Posted At</th></tr>';
+                echo '<tr><th>ID</th><th>Object Details</th><th>Contact</th><th>Contact Method</th><th>Image</th><th>Posted At</th></tr>';
 
                 // Output data from rows
                 while ($row = mysqli_fetch_assoc($result)) {

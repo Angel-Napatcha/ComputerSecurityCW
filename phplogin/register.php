@@ -124,6 +124,19 @@
                 <i class="fas fa-lock"></i>
             </label>
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+            <label for="security_question">
+                <i class="fas fa-key"></i>
+            </label>
+            <select name="security_question" required>
+                <option value="" disabled selected>Select Security Question</option>
+                <option value="Which city were you born in?">Which city were you born in?</option>
+                <option value="What was the name of your first school?">What was the name of your first school?</option>
+                <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+            </select>
+            <label for="security_answer">
+                <i class="fas fa-key"></i>
+            </label>
+            <input type="text" name="security_answer" placeholder="Answer to Security Question" required>
             <input type="submit" class="g-recaptcha"
                 data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
                 data-callback='onSubmit'

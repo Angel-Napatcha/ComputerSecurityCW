@@ -1,15 +1,12 @@
 <?php
-// Start or resume the session
+
 session_start();
 
-// If the user is not logged in, redirect to the login page
-if (!isset($_SESSION['loggedin'])) {
+if ($_SESSION['loggedin'] !== true) {
     header('Location: index.php');
     exit;
 }
 
-// Regenerate session ID to enhance security
-session_regenerate_id(true);
 ?>
 
 <!DOCTYPE html>

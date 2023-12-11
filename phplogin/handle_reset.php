@@ -95,6 +95,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    $securityAnswer = $_POST['security_answer'];
+    $checkSecurityStmt = $con->prepare('SELECT security_answer FROM accounts WHERE email = ?');
+    $checkSecurityStmt->bind_param('s', $_POST['email']);
+    $checkSecurityStmt->execute();
+    $checkSecurityStmt->store_result();
+
+    if ($checkSecurityStmt->num_rows > 0) {
+        $checkSecurityStmt->bind_result($hashedSecurityAnswer);
+        $checkSecurityStmt->fetch();
+
+        // Verify the security answer
+        if (!password_verify($securityAnswer, $hashedSecurityAnswer)) {
+            echo 'Wrong security answer.';
+            exit();
+        }
+    }
+
     // Hash the new password before updating
     $newPasswordHash = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
 
