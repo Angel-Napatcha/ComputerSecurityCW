@@ -49,7 +49,7 @@
             strengthText.style.textAlign = 'center';
             strengthText.style.fontSize = '14px';
             strengthText.style.padding = '10px';
-            strengthText.style.marginBottom = '20px';
+            strengthText.style.marginBottom = '30px';
         }
 
     // Add an event listener to the password input to update strength in real-time

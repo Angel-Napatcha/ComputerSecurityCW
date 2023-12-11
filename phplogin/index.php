@@ -20,7 +20,7 @@
                 }
             }
 
-            return true; // Proceed with custom password validation
+            return true; // Proceed with onSubmit function
         }
 
         function onSubmit(token) {
@@ -29,13 +29,11 @@
             }
         }
     </script>
-</head>
-<body>
-</head>
+
 <body class="login-page"> 
     <div class="form-container">
         <h1>Login</h1>
-        <form id=login_form class=register action="authenticate.php" method="post">
+        <form id="login_form" class="register" action="authenticate.php" method="post">
             <label for="username">
                 <i class="fas fa-user"></i>
             </label>

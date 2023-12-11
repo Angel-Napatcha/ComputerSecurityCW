@@ -71,7 +71,7 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
                 header('Location: home.php');
 
                 // Reset failed attempts on successful login
-                $updateStmt = $con->prepare("UPDATE accounts SET failed_attempts = 0 WHERE id = ?");
+                $updateStmt = $con->prepare("UPDATE accounts SET failed_attempts = NULL WHERE id = ?");
                 $updateStmt->bind_param('i', $id);
                 $updateStmt->execute();
                 $updateStmt->close();
