@@ -50,10 +50,10 @@
             strengthText.style.fontSize = '14px';
             strengthText.style.padding = '10px';
             strengthText.style.marginBottom = '30px';
-            }
+        }
 
-            // Add an event listener to the password input to update strength in real-time
-            document.getElementById('password').addEventListener('input', updatePasswordStrength);
+        // Add an event listener to the password input to update strength in real-time
+        document.getElementById('password').addEventListener('input', updatePasswordStrength);
 
         function validatePassword() {
             var password = document.getElementById('password').value;
@@ -107,6 +107,14 @@
                 <i class="fas fa-user"></i>
             </label>
             <input type="text" name="username" placeholder="Username" id="username" required>
+            <label for="email">
+                <i class="fas fa-envelope"></i>
+            </label>
+            <input type="email" name="email" placeholder="Email" id="email" required>
+            <label for="telephone_no">
+                <i class="fas fa-phone"></i>
+            </label>
+            <input type="text" name="telephone_no" placeholder="Phone Number" id="telephone_no" required>
             <label for="password">
                 <i class="fas fa-lock"></i>
             </label>
@@ -116,20 +124,11 @@
                 <i class="fas fa-lock"></i>
             </label>
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
-            <label for="email">
-                <i class="fas fa-envelope"></i>
-            </label>
-            <input type="email" name="email" placeholder="Email" id="email" required>
-            <label for="telephone_no">
-                <i class="fas fa-phone"></i>
-            </label>
-            <input type="text" name="telephone_no" placeholder="Phone Number" id="telephone_no" required>
             <input type="submit" class="g-recaptcha"
                 data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
                 data-callback='onSubmit'
                 data-action='submit' value='Create Account'>
-            <!-- <input type="submit" value="Register"> -->
-        
+        </form>
     </div>
 </body>
 </html>

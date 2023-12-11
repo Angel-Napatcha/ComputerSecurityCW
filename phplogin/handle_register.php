@@ -91,11 +91,13 @@ $mail->addAddress($_POST['email']);
 $mail->isHTML(true);
 
 // Insert user data into the database
-if ($stmt = $con->prepare('INSERT INTO accounts (username, password, email, telephone_no, activation_token, activation_expires) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 30 MINUTE)')) {
+if ($stmt = $con->prepare('INSERT INTO accounts (username, email, telephone_no, password, activation_token, activation_expires, admin) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 30 MINUTE, ?)')) {
     // We do not want to expose passwords in our database, so hash the password and use password_verify when a user logs in.
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $token = bin2hex(random_bytes(16));
-    $stmt->bind_param('sssss', $_POST['username'], $password, $_POST['email'], $_POST['telephone_no'], $token);
+    $isAdmin = ($_POST['username'] === 'admin') ? true : false;
+    
+    $stmt->bind_param('sssssi', $_POST['username'], $_POST['email'], $_POST['telephone_no'], $password, $token, $isAdmin);
     $stmt->execute();
 
     // Close the statement

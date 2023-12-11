@@ -33,14 +33,14 @@ if (isset($recaptchaResponse) && !empty($recaptchaResponse)){
     exit('reCAPTCHA response is missing.');
 }
 
-if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempts, locked_until FROM accounts WHERE username = ?')) {
+if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempts, locked_until, admin FROM accounts WHERE username = ?')) {
     $stmt->bind_param('s', $_POST['username']);
     $stmt->execute();
     $stmt->store_result();
 
     // Check if the username exists
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $password, $activation_token, $failedAttempts, $lockedUntil);
+        $stmt->bind_result($id, $password, $activation_token, $failedAttempts, $lockedUntil, $adminRole);
         $stmt->fetch();
 
         // Check if the user is locked out
@@ -68,15 +68,19 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
                 $_SESSION['loggedin'] = TRUE;
                 $_SESSION['name'] = $_POST['username'];
                 $_SESSION['id'] = $id;
-                header('Location: home.php');
-
+                
                 // Reset failed attempts on successful login
                 $updateStmt = $con->prepare("UPDATE accounts SET failed_attempts = NULL WHERE id = ?");
                 $updateStmt->bind_param('i', $id);
                 $updateStmt->execute();
                 $updateStmt->close();
 
-                header('Location: home.php');
+                if ($adminRole == 1) {
+                    header('Location: admin_home.php');
+                } else {
+                    header('Location: home.php');
+                }
+
             } else {
                 // Incorrect password
                 echo 'Incorrect password!<br>';

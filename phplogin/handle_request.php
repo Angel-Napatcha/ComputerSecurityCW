@@ -82,11 +82,10 @@ if (!in_array($imageFileType, $allowedFormats)) {
 
 // Check if $uploadOk is set to 0 by an error
 if ($uploadOk == 0) {
-    echo "Sorry, your file was not uploaded.";
+    echo " Your file was not uploaded.";
 } else {
     // Move the image to the target directory
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        echo "The file " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " has been uploaded.";
 
         // Now you can insert the file path into the database
         // Update your SQL query accordingly to include the image file path
