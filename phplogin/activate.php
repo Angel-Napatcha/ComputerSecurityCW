@@ -1,4 +1,11 @@
 <?php
+// Start or resume the session
+session_start();
+
+if ($_SESSION['loggedin'] !== true) {
+    header('Location: index.php');
+    exit;
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;

@@ -1,5 +1,7 @@
 <?php
+// Start or resume the session
 session_start();
+
 date_default_timezone_set('Europe/London');
 
 $DATABASE_HOST = '127.0.0.1';
@@ -62,12 +64,12 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
         if ($activation_token === 'activated') {
             // Account is not locked, verify the password.
             if (password_verify($_POST['password'], $password)) {
-                // Verification success! User has logged-in!
-                // Create sessions, so we know the user is logged in, they basically act like cookies but remember the data on the server.
+                // Verification success, user has logged-in.
                 session_regenerate_id();
                 $_SESSION['loggedin'] = TRUE;
                 $_SESSION['name'] = $_POST['username'];
                 $_SESSION['id'] = $id;
+                $_SESSION['user_type'] = ($adminRole == 1) ? 'admin' : 'regular';
                 
                 // Reset failed attempts on successful login
                 $updateStmt = $con->prepare("UPDATE accounts SET failed_attempts = NULL WHERE id = ?");

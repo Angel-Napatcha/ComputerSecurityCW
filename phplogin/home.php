@@ -1,12 +1,12 @@
 <?php
-
+// Start or resume the session
 session_start();
 
-if ($_SESSION['loggedin'] !== true) {
+// Your existing check for logged-in status
+if (!$_SESSION['loggedin'] || $_SESSION['user_type'] !== 'regular') {
     header('Location: index.php');
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +17,7 @@ if ($_SESSION['loggedin'] !== true) {
     <title>Home Page</title>
     <link href="style.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <script src="https://www.google.com/recaptcha/api.js" ></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
         function validateForm() {
             var form = document.getElementById('request_form');
@@ -40,6 +40,12 @@ if ($_SESSION['loggedin'] !== true) {
                 document.getElementById("request_form").submit();
             }
         }
+
+        // Disable the back button
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.pushState(null, null, location.href);
+        };
     </script>
 </head>
 
@@ -52,12 +58,12 @@ if ($_SESSION['loggedin'] !== true) {
         </div>
     </nav>
     <div class="content">
-        <h2>Welcome back, <?=$_SESSION['name']?>!</h2>
+        <h2>Welcome back, <?= $_SESSION['name'] ?>!</h2>
 
         <!-- Modal for Request Evaluation Form -->
         <div id="request_modal">
             <div class="modal-content">
-                <h2>Request Form<h2>
+                <h2>Request Form</h2>
                 <form id="request_form" action="handle_request.php" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="user_id" value="<?php echo $_SESSION['id']; ?>">
                     <div class="form-group">
@@ -82,15 +88,11 @@ if ($_SESSION['loggedin'] !== true) {
 
                     <!-- Inside the form group for the submit button -->
                     <div class="form-group">
-                        <button type="submit" class="submit-button g-recaptcha"
-                                data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
-                                data-callback='onSubmit'
-                                data-action='submit'>
-                                Submit Request
+                        <button type="submit" class="submit-button g-recaptcha" data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
+                            data-callback='onSubmit' data-action='submit'>
+                            Submit Request
                         </button>
                     </div>
-            </div>
-
                 </form>
             </div>
         </div>

@@ -1,6 +1,11 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+// Start or resume the session
+session_start();
+
+if ($_SESSION['loggedin'] !== true) {
+    header('Location: index.php');
+    exit;
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -8,18 +13,6 @@ use PHPMailer\PHPMailer\Exception;
 require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
-
-// Start or resume the session
-session_start();
-
-// If the user is not logged in, redirect to the login page
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: index.php');
-    exit;
-}
-
-// Regenerate session ID to enhance security
-session_regenerate_id(true);
 
 $DATABASE_HOST = '127.0.0.1';
 $DATABASE_USER = 'root';

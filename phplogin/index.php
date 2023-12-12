@@ -1,3 +1,18 @@
+<?php
+session_start();
+
+// If the user is already logged in, redirect to the home page
+if ($_SESSION['loggedin']) {
+    if ($_SESSION['user_type'] === 'admin') {
+        header('Location: admin_home.php');
+        exit;
+    } else {
+        header('Location: home.php');
+        exit;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,7 +58,7 @@
             </label>
             <input type="password" name="password" placeholder="Password" id="password" required>
             <div class="forgot-password">
-                <a href="forgot_password.html">Forgot Password?</a>
+                <a href="forgot_password.php">Forgot Password?</a>
             </div>
             <input type="submit" class="g-recaptcha"
                     data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
