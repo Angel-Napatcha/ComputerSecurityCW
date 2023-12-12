@@ -52,7 +52,8 @@ if (preg_match('/^[a-zA-Z0-9]+$/', htmlspecialchars($_POST['username'])) == 0) {
     exit('Username is not valid!');
 }
 
-if (!preg_match('/^[0-9]{11}$/', htmlspecialchars($_POST['telephone_no']))) {
+// Validate phone format
+if (!preg_match('/^[0-9-+\s()]*$"/', htmlspecialchars($_POST['telephone_no']))) {
     exit('Phone number is not valid!');
 }
 

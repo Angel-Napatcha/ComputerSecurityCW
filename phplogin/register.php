@@ -137,7 +137,7 @@ if ($_SESSION['loggedin']) {
             <label for="telephone_no">
                 <i class="fas fa-phone"></i>
             </label>
-            <input type="text" inputmode="numeric" name="telephone_no" placeholder="Phone Number" id="telephone_no" required>
+            <input type="tel" name="telephone_no" placeholder="e.g., 07123 456 789 or +44 7123 676834" id="telephone_no" required>
             
             <!-- Form group for password -->
             <label for="password">
@@ -155,7 +155,7 @@ if ($_SESSION['loggedin']) {
                 <i class="fas fa-key"></i>
             </label>
             <select name="security_question" required>
-                <option value="" disabled selected>Select Security Question</option>
+                <option value="" disabled selected>Select a Security Question</option>
                 <option value="Which city were you born in?">Which city were you born in?</option>
                 <option value="What was the name of your first school?">What was the name of your first school?</option>
                 <option value="What was the name of your first pet?">What was the name of your first pet?</option>

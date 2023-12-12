@@ -49,7 +49,8 @@ body.login-page .form-container {
 
 .form-container form input[type="password"],
 .form-container form input[type="text"],
-.form-container form input[type="email"] {
+.form-container form input[type="tel"],
+.form-container form input[type="email"]  {
     width: 310px;
     height: 50px;
     border: 1px solid #d4c3b4; /* Light brown */
