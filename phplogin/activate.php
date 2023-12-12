@@ -2,11 +2,6 @@
 // Start or resume the session
 session_start();
 
-if ($_SESSION['loggedin'] !== true) {
-    header('Location: index.php');
-    exit;
-}
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -14,14 +9,16 @@ require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
+// Database connection configuration
 $DATABASE_HOST = '127.0.0.1';
 $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
 $DATABASE_NAME = 'phplogin';
 
-// Try and connect using the info above.
+// Establish a connection to the database
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
 
+// Exit if there is an error connecting to the database
 if (mysqli_connect_errno()) {
     exit('Failed to connect to MySQL: ' . mysqli_connect_error());
 }
@@ -64,7 +61,7 @@ function resendActivationLink($email, $con) {
     }
 }
 
-// Check if email and token exist in the URL.
+// Check if email and token exist in the URL
 if (isset($_GET['email'], $_GET['token'])) {
     if ($stmt = $con->prepare('SELECT activation_token, activation_expires FROM accounts WHERE email = ? AND activation_token = ?')) {
         $stmt->bind_param('ss', $_GET['email'], $_GET['token']);

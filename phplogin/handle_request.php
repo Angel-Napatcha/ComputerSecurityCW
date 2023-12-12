@@ -2,11 +2,7 @@
 // Start or resume the session
 session_start();
 
-if ($_SESSION['loggedin'] !== true) {
-    header('Location: index.php');
-    exit;
-}
-
+// PHPMailer classes for email functionality
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -14,21 +10,25 @@ require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
+// Database connection configuration
 $DATABASE_HOST = '127.0.0.1';
 $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
 $DATABASE_NAME = 'phplogin';
 
+// Establish a connection to the database
+$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+
+// reCAPTCHA configuration
 $secretKey = '6LdGDiwpAAAAAKaL68Q7TouTZP62BVUTqRK7H21d';
 $recaptchaResponse = $_POST['g-recaptcha-response'];
 
-// Try and connect using the info above.
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
+// Exit if there is an error connecting to the database
 if (mysqli_connect_errno()) {
     exit('Failed to connect to MySQL: ' . mysqli_connect_error());
 }
 
+// Validate reCAPTCHA response
 if (isset($recaptchaResponse) && !empty($recaptchaResponse)) {
     $verificationUrl = 'https://www.google.com/recaptcha/api/siteverify';
     $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $recaptchaResponse;
@@ -42,8 +42,9 @@ if (isset($recaptchaResponse) && !empty($recaptchaResponse)) {
     exit('reCAPTCHA response is missing.');
 }
 
+// Set the target directory for file uploads
 $target_dir = "uploads/";
-$target_file = __DIR__ . '/' . $target_dir . basename($_FILES["fileToUpload"]["name"]);
+$target_file = __DIR__ . '/' . $target_dir .  htmlspecialchars(basename($_FILES["fileToUpload"]["name"]));;
 $uploadOk = 1;
 $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
@@ -77,16 +78,16 @@ if (!in_array($imageFileType, $allowedFormats)) {
 if ($uploadOk == 0) {
     echo " Your file was not uploaded.";
 } else {
-    // Move the image to the target directory
+    // Move the uploaded image to the target directory
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
 
-        // Now you can insert the file path into the database
-        // Update your SQL query accordingly to include the image file path
+        // Insert the file path into the database
         $imageFilePath = $target_file;
 
+        // Extract data from the form
         $userId = $_POST['user_id'];
-        $objectDetails = $_POST['object_details'];
-        $contactMethod = $_POST['contact_method'];
+        $objectDetails = htmlspecialchars($_POST['object_details']);
+        $contactMethod = htmlspecialchars($_POST['contact_method']);
 
         // Fetch user's contact information from the database
         $query = "SELECT email, telephone_no FROM accounts WHERE id = $userId";
@@ -100,6 +101,7 @@ if ($uploadOk == 0) {
             $contact = '';
             $contactInformation = $row['email'];
 
+            // Set contact type based on the chosen method
             if ($contactMethod === 'email' && !empty($row['email'])) {
                 $contact = $row['email'];
                 $contactType = 'email';
@@ -147,7 +149,7 @@ if ($uploadOk == 0) {
                 }
             }
 
-            // Add the $imageFilePath to your database query or update statement
+            // Update requests table in database
             $stmt = $con->prepare("INSERT INTO requests (user_id, object_details, contact_method, contact, image_path) VALUES (?, ?, ?, ?, ?)");
             $stmt->bind_param('issss', $userId, $objectDetails, $contactMethod, $contact, $imageFilePath);
 

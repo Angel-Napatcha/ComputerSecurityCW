@@ -2,34 +2,33 @@
 // Start or resume the session
 session_start();
 
-if ($_SESSION['loggedin'] !== true) {
-    header('Location: index.php');
-    exit;
-}
-
+// PHPMailer classes for email functionality
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
+// Database connection configuration
 $DATABASE_HOST = '127.0.0.1';
 $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
 $DATABASE_NAME = 'phplogin';
 
+// Establish a connection to the database
+$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+
+// reCAPTCHA configuration
 $secretKey = '6LdGDiwpAAAAAKaL68Q7TouTZP62BVUTqRK7H21d';
 $recaptchaResponse = $_POST['g-recaptcha-response'];
 
-// Try and connect using the info above.
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+// Exit if there is an error connecting to the database
 if (mysqli_connect_errno()) {
-    // If there is an error with the connection, stop the script and display the error.
     exit('Failed to connect to MySQL: ' . mysqli_connect_error());
 }
 
+// Validate reCAPTCHA response
 if (isset($recaptchaResponse) && !empty($recaptchaResponse)){
     $verificationUrl = 'https://www.google.com/recaptcha/api/siteverify';
     $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $recaptchaResponse;
@@ -43,15 +42,17 @@ if (isset($recaptchaResponse) && !empty($recaptchaResponse)){
     exit('reCAPTCHA response is missing.');
 }
 
-if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+// Validate email format
+if (!filter_var(htmlspecialchars($_POST['email']), FILTER_VALIDATE_EMAIL)) {
     exit('Email is not valid!');
 }
 
-if (preg_match('/^[a-zA-Z0-9]+$/', $_POST['username']) == 0) {
+// Validate username format using regular expression
+if (preg_match('/^[a-zA-Z0-9]+$/', htmlspecialchars($_POST['username'])) == 0) {
     exit('Username is not valid!');
 }
 
-if (!preg_match('/^[0-9]{11}$/', $_POST['telephone_no'])) {
+if (!preg_match('/^[0-9]{11}$/', htmlspecialchars($_POST['telephone_no']))) {
     exit('Phone number is not valid!');
 }
 
@@ -61,8 +62,8 @@ $check_stmt->bind_param('ss', $_POST['username'], $_POST['email']);
 $check_stmt->execute();
 $check_stmt->store_result();
 
+// Check if the username exists
 if ($check_stmt->num_rows > 0) {
-    // Username or email already exists
     exit('Username and/or email already exists, please choose another!');
 }
 
@@ -87,12 +88,14 @@ $mail->isHTML(true);
 
 // Insert user data into the database
 if ($stmt = $con->prepare('INSERT INTO accounts (username, email, telephone_no, password, security_question, security_answer, activation_token, activation_expires, admin) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 30 MINUTE, ?)')) {
-    // We do not want to expose passwords in our database, so hash the password and use password_verify when a user logs in.
+    // Hash the password and security answer
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $securityQuestion = $_POST['security_question'];
     $securityAnswer = password_hash($_POST['security_answer'], PASSWORD_DEFAULT);
 
+    // Generate a unique activation token
     $token = bin2hex(random_bytes(16));
+    // Check if the username is 'Admin' to determine admin role
     $isAdmin = ($_POST['username'] === 'Admin') ? true : false;
     
     $stmt->bind_param('sssssssi', $_POST['username'], $_POST['email'], $_POST['telephone_no'], $password, $securityQuestion, $securityAnswer, $token, $isAdmin);

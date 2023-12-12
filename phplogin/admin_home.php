@@ -2,6 +2,7 @@
 // Start or resume the session
 session_start();
 
+// Redirect to the index page if the user is not logged in or is not an admin
 if (!$_SESSION['loggedin'] || $_SESSION['user_type'] !== 'admin') {
     header('Location: index.php');
     exit;
@@ -35,14 +36,16 @@ if (!$_SESSION['loggedin'] || $_SESSION['user_type'] !== 'admin') {
             <h3>List of Requests</h3>
 
             <?php
-            // Include your database connection here
+            // Database connection configuration
             $DATABASE_HOST = '127.0.0.1';
             $DATABASE_USER = 'root';
             $DATABASE_PASS = '';
             $DATABASE_NAME = 'phplogin';
 
+            // Establish a connection to the database
             $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
 
+            // Exit if there is an error connecting to the database
             if (mysqli_connect_errno()) {
                 exit('Failed to connect to MySQL: ' . mysqli_connect_error());
             }
@@ -83,5 +86,4 @@ if (!$_SESSION['loggedin'] || $_SESSION['user_type'] !== 'admin') {
         </div>   
     </div>
 </body>
-
 </html>

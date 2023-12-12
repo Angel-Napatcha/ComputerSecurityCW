@@ -4,12 +4,13 @@ session_start();
 // If the user is already logged in, redirect to the home page
 if ($_SESSION['loggedin']) {
     if ($_SESSION['user_type'] === 'admin') {
+        // Redirect admin users to the admin home page
         header('Location: admin_home.php');
-        exit;
     } else {
+        // Redirect regular users to the home page
         header('Location: home.php');
-        exit;
     }
+    exit;
 }
 ?>
 
@@ -49,8 +50,8 @@ if ($_SESSION['loggedin']) {
                     strengthText.textContent = 'Moderate: Consider adding a mix of uppercase letters, numbers, and symbols for additional security.';
                     break;
                 case 3:
-                    passwordInput.style.border = '2px solid orange';
-                    strengthText.style.color = 'orange';
+                    passwordInput.style.border = '2px solid #f0ce3a';
+                    strengthText.style.color = '#f0ce3a';
                     strengthText.textContent = 'Moderate: Good job! Consider adding a mix of uppercase letters, numbers, and symbols for additional security.';
                     break;
                 case 4:
@@ -70,12 +71,13 @@ if ($_SESSION['loggedin']) {
         // Add an event listener to the password input to update strength in real-time
         document.getElementById('new_password').addEventListener('input', updatePasswordStrength);
 
+        // Function to validate password strength and form submission
         function validatePassword() {
             var password = document.getElementById('new_password').value;
             var result = zxcvbn(password);
 
             // Check if password strength is strong (score 4)
-            if (result.score < 3) {
+            if (result.score < 4) {
                 alert('Please choose a stronger password.');
                 return false; // Prevent form submission
             }
@@ -83,6 +85,7 @@ if ($_SESSION['loggedin']) {
             return true; // Allow form submission
         }
 
+        // Function to validate required fields and initiate custom password validation
         function validateForm() {
             var form = document.getElementById('reset_password');
             var requiredFields = form.querySelectorAll('[required]');
@@ -95,10 +98,10 @@ if ($_SESSION['loggedin']) {
                     return false; // Prevent form submission
                 }
             }
-
             return validatePassword(); // Proceed with custom password validation
         }
 
+        // Function to submit the form after validating
         function onSubmit(token) {
             if (validateForm()) {
                 document.getElementById("reset_password").submit();
@@ -136,6 +139,7 @@ if ($_SESSION['loggedin']) {
             
             <input type="hidden" name="email" value="<?php echo htmlspecialchars($_GET['email']); ?>">
             <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']); ?>">
+            <!-- Form group new password -->
             <label for="new_password">New Password:</label>
             <input type="password" id="new_password" name="new_password" oninput="updatePasswordStrength()" required>
             <div id="strength-text"></div>
@@ -156,10 +160,11 @@ if ($_SESSION['loggedin']) {
             }
             ?>
 
-            <!-- Add textfield for the answer to the security question -->
+            <!-- Form group for the answer to the security question -->
             <label for="security_answer">Security Answer:</label>
             <input type="text" id="security_answer" name="security_answer" required>
 
+            <!-- Form group for the submit button with reCAPTCHA -->
             <button type="submit" class="g-recaptcha"
                 data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
                 data-callback='onSubmit'

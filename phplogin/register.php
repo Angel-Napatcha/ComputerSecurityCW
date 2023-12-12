@@ -4,12 +4,13 @@ session_start();
 // If the user is already logged in, redirect to the home page
 if ($_SESSION['loggedin']) {
     if ($_SESSION['user_type'] === 'admin') {
+        // Redirect admin users to the admin home page
         header('Location: admin_home.php');
-        exit;
     } else {
+        // Redirect regular users to the home page
         header('Location: home.php');
-        exit;
     }
+    exit;
 }
 ?>
 
@@ -49,8 +50,8 @@ if ($_SESSION['loggedin']) {
                     strengthText.textContent = 'Moderate: Consider adding a mix of uppercase letters, numbers, and symbols for additional security.';
                     break;
                 case 3:
-                    passwordInput.style.border = '2px solid orange';
-                    strengthText.style.color = 'orange';
+                    passwordInput.style.border = '2px solid #f0ce3a';
+                    strengthText.style.color = '#f0ce3a';
                     strengthText.textContent = 'Moderate: Good job! Consider adding a mix of uppercase letters, numbers, and symbols for additional security.';
                     break;
                 case 4:
@@ -70,6 +71,7 @@ if ($_SESSION['loggedin']) {
         // Add an event listener to the password input to update strength in real-time
         document.getElementById('password').addEventListener('input', updatePasswordStrength);
 
+        // Function to validate password strength and form submission
         function validatePassword() {
             var password = document.getElementById('password').value;
             var confirm_password = document.getElementById('confirm_password').value;
@@ -82,14 +84,14 @@ if ($_SESSION['loggedin']) {
             }
 
             // Check if password strength is strong (score 4)
-            if (result.score < 3) {
+            if (result.score < 4) {
                 alert('Please choose a stronger password.');
                 return false; // Prevent form submission
             }
-
             return true; // Allow form submission
         }
 
+        // Function to validate required fields and initiate custom password validation
         function validateForm() {
             var form = document.getElementById('register_form');
             var requiredFields = form.querySelectorAll('[required]');
@@ -102,10 +104,10 @@ if ($_SESSION['loggedin']) {
                     return false; // Prevent form submission
                 }
             }
-
             return validatePassword(); // Proceed with custom password validation
         }
 
+        // Function to submit the form after validating
         function onSubmit(token) {
             if (validateForm()) {
                 document.getElementById("register_form").submit();
@@ -115,21 +117,29 @@ if ($_SESSION['loggedin']) {
 
 </head>
 <body>
+    <!-- Register form -->
     <div class="form-container">
         <h1>Register</h1>
         <form id="register_form" method="post" action="handle_register.php" onsubmit="return validatePassword()" autocomplete="off">
+            <!-- Form group for username -->
             <label for="username">
                 <i class="fas fa-user"></i>
             </label>
             <input type="text" name="username" placeholder="Username" id="username" required>
+            
+            <!-- Form group for email -->
             <label for="email">
                 <i class="fas fa-envelope"></i>
             </label>
             <input type="email" name="email" placeholder="Email" id="email" required>
+            
+            <!-- Form group for telephone number -->
             <label for="telephone_no">
                 <i class="fas fa-phone"></i>
             </label>
-            <input type="text" name="telephone_no" placeholder="Phone Number" id="telephone_no" required>
+            <input type="text" inputmode="numeric" name="telephone_no" placeholder="Phone Number" id="telephone_no" required>
+            
+            <!-- Form group for password -->
             <label for="password">
                 <i class="fas fa-lock"></i>
             </label>
@@ -139,6 +149,8 @@ if ($_SESSION['loggedin']) {
                 <i class="fas fa-lock"></i>
             </label>
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+            
+            <!-- Form group for security question -->
             <label for="security_question">
                 <i class="fas fa-key"></i>
             </label>
@@ -148,10 +160,14 @@ if ($_SESSION['loggedin']) {
                 <option value="What was the name of your first school?">What was the name of your first school?</option>
                 <option value="What was the name of your first pet?">What was the name of your first pet?</option>
             </select>
+            
+            <!-- Form group for security answer -->
             <label for="security_answer">
                 <i class="fas fa-key"></i>
             </label>
             <input type="text" name="security_answer" placeholder="Answer to Security Question" required>
+            
+            <!-- Form group for the submit button with reCAPTCHA -->
             <input type="submit" class="g-recaptcha"
                 data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
                 data-callback='onSubmit'

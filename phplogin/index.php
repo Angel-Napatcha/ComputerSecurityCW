@@ -4,12 +4,13 @@ session_start();
 // If the user is already logged in, redirect to the home page
 if ($_SESSION['loggedin']) {
     if ($_SESSION['user_type'] === 'admin') {
+        // Redirect admin users to the admin home page
         header('Location: admin_home.php');
-        exit;
     } else {
+        // Redirect regular users to the home page
         header('Location: home.php');
-        exit;
     }
+    exit;
 }
 ?>
 
@@ -22,6 +23,7 @@ if ($_SESSION['loggedin']) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://www.google.com/recaptcha/api.js" ></script>
     <script>
+        // Function to validate form fields
         function validateForm() {
             var form = document.getElementById('login_form');
             var requiredFields = form.querySelectorAll('[required]');
@@ -34,10 +36,10 @@ if ($_SESSION['loggedin']) {
                     return false; // Prevent form submission
                 }
             }
-
             return true; // Proceed with onSubmit function
         }
 
+        // Function to submit form after reCAPTCHA validation
         function onSubmit(token) {
             if (validateForm()) {
                 document.getElementById("login_form").submit();
@@ -48,6 +50,7 @@ if ($_SESSION['loggedin']) {
 <body class="login-page"> 
     <div class="form-container">
         <h1>Login</h1>
+         <!-- Login form -->
         <form id="login_form" class="register" action="authenticate.php" method="post">
             <label for="username">
                 <i class="fas fa-user"></i>
@@ -57,14 +60,17 @@ if ($_SESSION['loggedin']) {
                 <i class="fas fa-lock"></i>
             </label>
             <input type="password" name="password" placeholder="Password" id="password" required>
+            <!-- Forgot password link -->
             <div class="forgot-password">
                 <a href="forgot_password.php">Forgot Password?</a>
             </div>
-            <input type="submit" class="g-recaptcha"
+            <!-- Submit button with reCAPTCHA -->
+            <input type="submit" id=login-button class="g-recaptcha"
                     data-sitekey="6LdGDiwpAAAAABX7xkZtqZmcjvfjkSiDvGIWyGPt"
                     data-callback='onSubmit'
                     data-action='submit' value="Login">
         </form>
+        <!-- Registration link -->
         <p>Don't have an account? <a href="register.php">Register here</a></p>
     </div>
 </body>

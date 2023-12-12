@@ -2,32 +2,40 @@
 // Start or resume the session
 session_start();
 
+// Set default timezone
 date_default_timezone_set('Europe/London');
 
+// Database connection configuration
 $DATABASE_HOST = '127.0.0.1';
 $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
 $DATABASE_NAME = 'phplogin';
 
+// Establish a connection to the database
+$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+
+// reCAPTCHA configuration
 $secretKey = '6LdGDiwpAAAAAKaL68Q7TouTZP62BVUTqRK7H21d';
 $recaptchaResponse = $_POST['g-recaptcha-response'];
 
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
+// Exit if there is an error connecting to the database
 if (mysqli_connect_errno()) {
     exit('Failed to connect to MySQL: ' . mysqli_connect_error());
 }
 
+// Check if username and password are provided
 if (!isset($_POST['username'], $_POST['password'])) {
     exit('Please fill both the username and password fields!');
 }
 
+// Validate reCAPTCHA response
 if (isset($recaptchaResponse) && !empty($recaptchaResponse)){
     $verificationUrl = 'https://www.google.com/recaptcha/api/siteverify';
     $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $recaptchaResponse;
     $response = file_get_contents($url);
     $recaptchaResult = json_decode($response);
-
+    
+    // Exit if reCAPTCHA verification fails
     if (!$recaptchaResult->success){
         exit('reCAPTCHA verification failed. Please try again.');
     }
@@ -35,6 +43,7 @@ if (isset($recaptchaResponse) && !empty($recaptchaResponse)){
     exit('reCAPTCHA response is missing.');
 }
 
+// Prepare and execute the statement to retrieve user details
 if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempts, locked_until, admin FROM accounts WHERE username = ?')) {
     $stmt->bind_param('s', $_POST['username']);
     $stmt->execute();
@@ -62,12 +71,12 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
 
         // Account is registered
         if ($activation_token === 'activated') {
-            // Account is not locked, verify the password.
+            // Account is not locked, verify the password
             if (password_verify($_POST['password'], $password)) {
-                // Verification success, user has logged-in.
+                // Verification success, user has logged-in
                 session_regenerate_id();
                 $_SESSION['loggedin'] = TRUE;
-                $_SESSION['name'] = $_POST['username'];
+                $_SESSION['name'] = htmlspecialchars($_POST['username']);
                 $_SESSION['id'] = $id;
                 $_SESSION['user_type'] = ($adminRole == 1) ? 'admin' : 'regular';
                 
@@ -77,6 +86,7 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
                 $updateStmt->execute();
                 $updateStmt->close();
 
+                // Redirect based on user role
                 if ($adminRole == 1) {
                     header('Location: admin_home.php');
                 } else {
@@ -114,11 +124,11 @@ if ($stmt = $con->prepare('SELECT id, password, activation_token, failed_attempt
         // Username not registered
         echo 'Username not registered!<br>';
     }
-
+    // Close the statement
     $stmt->close();
 } else {
     echo 'Could not prepare statement! Error: ' . $con->error;
 }
-
+// Close the database connection
 $con->close();
 ?>

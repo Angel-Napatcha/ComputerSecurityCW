@@ -5,15 +5,16 @@
 }
 
 body {
-    background-color: #435165;
+    background-color: #f2ede3; /* Warm beige */
     margin: 0;
 }
 
 .form-container {
     width: 400px;
-    background-color: #ffffff;
+    background-color: #fae4d6; /* Peach */
     box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
     margin: 100px auto;
+    border-radius: 10px;
 }
 
 body.login-page .form-container {
@@ -22,10 +23,10 @@ body.login-page .form-container {
 
 .form-container h1 {
     text-align: center;
-    color: #5b6574;
+    color: #a1856b; /* Brownish gray */
     font-size: 24px;
     padding: 20px 0;
-    border-bottom: 1px solid #dee0e4;
+    border-bottom: 1px solid #d4c3b4; /* Light brown */
 }
 
 .form-container form {
@@ -41,7 +42,7 @@ body.login-page .form-container {
     align-items: center;
     width: 50px;
     height: 50px;
-    background-color: #3274d6;
+    background-color: #e79e91; /* Coral peach */
     color: #ffffff;
     transform: translateY(-50%);
 }
@@ -51,47 +52,70 @@ body.login-page .form-container {
 .form-container form input[type="email"] {
     width: 310px;
     height: 50px;
-    border: 1px solid #dee0e4;
+    border: 1px solid #d4c3b4; /* Light brown */
     margin-bottom: 0px;
-    margin-top: 0;
+    margin-top: 0px;
     padding: 0 15px;
 }
 
 .form-container form select {
     width: 310px;
     height: 50px;
-    border: 1px solid #dee0e4;
+    border: 1px solid #d4c3b4; /* Light brown */
     padding: 0 15px;
     margin-bottom: 20px;
 }
 
 .form-container form input[type="submit"] {
-    width: 100%;
+    width: 90%;
     padding: 15px;
-    margin-top: 10px;
-    background-color: #3274d6;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    background-color: #e79e91; /* Coral peach */
     border: 0;
     cursor: pointer;
     font-weight: bold;
     color: #ffffff;
     transition: background-color 0.2s;
+    border-radius: 10px;
 }
 
 .form-container form input[type="submit"]:hover {
-    background-color: #2868c7;
+    background-color: #c68376; /* Darker coral peach */
     transition: background-color 0.2s;
-    margin-bottom: 0;
+    margin-bottom: 20px;
+}
+
+.form-container #login-button {
+    /* Your default styles */
+    width: 90%;
+    padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    background-color: #e79e91; /* Coral peach */
+    border: 0;
+    cursor: pointer;
+    font-weight: bold;
+    color: #ffffff;
+    transition: background-color 0.2s;
+    border-radius: 10px;
+}
+
+.form-container #login-button:hover {
+    background-color: #c68376; /* Darker coral peach */
+    transition: background-color 0.2s;
+    margin-bottom: 20px;
 }
 
 .form-container p {
     text-align: center;
-    color: #5b6574;
-    margin-top: 20px;
+    color: #a1856b; /* Brownish gray */
+    margin-top: 0px;
     margin-bottom: 10px;
 }
 
 .form-container a {
-    color: #3274d6;
+    color: #e79e91; /* Coral peach */
     text-decoration: none;
     font-weight: bold;
 }
@@ -101,11 +125,12 @@ body.login-page .form-container {
 }
 
 .forgot-password a {
-    color: #3274d6;
+    color: #e79e91; /* Coral peach */
     text-decoration: none;
     margin-left: 250px;
     font-size: 14px;
     font-weight: normal;
+    margin-top: 0px;
 }
 
 .forgot-password a:hover {
@@ -118,7 +143,7 @@ body.login-page .form-container {
 }
 
 .navtop {
-    background-color: #2f3947;
+    background-color: #c68376; /* Dark coral peach */
     height: 60px;
     width: 100%;
     border: 0;
@@ -141,14 +166,14 @@ body.login-page .form-container {
     font-size: 24px;
     padding: 0;
     margin: 0;
-    color: #eaebed;
+    color: #eaebed; /* Light gray */
     font-weight: normal;
 }
 
 .navtop div a {
     padding: 0 20px;
     text-decoration: none;
-    color: #c1c4c8;
+    color: #ececec; /* Light gray */
     font-weight: bold;
 }
 
@@ -157,11 +182,11 @@ body.login-page .form-container {
 }
 
 .navtop div a:hover {
-    color: #eaebed;
+    color: #ffffff; /* Light gray */
 }
 
 body.loggedin {
-    background-color: #f3f4f7;
+    background-color: #f3f4f7; /* Light blue-gray */
 }
 
 .content {
@@ -173,8 +198,8 @@ body.loggedin {
     margin: 0;
     padding: 25px 0;
     font-size: 22px;
-    border-bottom: 1px solid #e0e0e3;
-    color: #a5aec7;
+    border-bottom: 1px solid #e0e0e3; /* Light gray */
+    color: #a5aec7; /* Light blue-gray */
 }
 
 content h3 {
@@ -188,7 +213,7 @@ content h3 {
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
     margin: 25px 0;
     padding: 25px;
-    background-color: #fff;
+    background-color: #fae4d6; /* Peach */
 }
 
 .content > p table td,
@@ -210,18 +235,19 @@ content h3 {
 
 .reset-password {
     width: 400px;
-    background-color: #ffffff;
+    background-color: #fae4d6; /* Peach */
     box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
     margin: 100px auto;
     text-align: center;
+    border-radius: 10px;
 }
 
 .reset-password h2 {
     text-align: center;
-    color: #5b6574;
+    color: #a1856b; /* Brownish gray */
     font-size: 24px;
     padding: 20px 0 20px 0;
-    border-bottom: 1px solid #dee0e4;
+    border-bottom: 1px solid #d4c3b4; /* Light brown */
 }
 
 .reset-password form {
@@ -236,37 +262,41 @@ content h3 {
     align-items: center;
     justify-content: center;
     width: 100%;
-    color: #3274d6;
+    color: #e79e91; /* Coral peach */
     font-weight: bold;
+    margin-top: 15px;
 }
 
 .reset-password input[type="password"], .reset-password input[type="text"], .reset-password input[type="email"] {
     width: 310px;
     height: 50px;
-    border: 1px solid #dee0e4;
+    border: 1px solid #d4c3b4; /* Light brown */
     margin-bottom: 10px;
     padding: 0 15px;
 }
 
 .reset-password button[type="submit"] {
-    width: 100%;
+    width: 78%;
     padding: 15px;
     margin-top: 20px;
-    background-color: #3274d6;
+    margin-bottom: 20px;
+    background-color: #e79e91; /* Coral peach */
     border: 0;
     cursor: pointer;
     font-weight: bold;
     color: #ffffff;
     transition: background-color 0.2s;
+    border-radius: 10px;
 }
 
 .reset-password button[type="submit"]:hover {
-    background-color: #2868c7;
+    background-color: #c68376; /* Darker coral peach */
     transition: background-color 0.2s;
+    margin-bottom: 20px;
 }
 
 .security-question {
-    margin-top: 10px;
+    margin-top: 5px;
     margin-bottom: 0px;
 }
 
@@ -274,11 +304,13 @@ content h3 {
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 0px;
+    text-align: center;
 }
 
 .question-text {
     font-size: 14px;
     color: #333;
+    text-align: center;
 }
 
 .modal-content {
@@ -288,7 +320,7 @@ content h3 {
     margin: 0 auto;
     padding: 20px;
     box-sizing: border-box;
-    background-color: #ffffff;
+    background-color: #fae4d6; /* Peach */
 }
 
 #request_modal h2 {
@@ -305,7 +337,7 @@ label {
     display: block;
     margin-top: 25px;
     margin-bottom: 10px;
-    color: #3274d6;
+    color: #e79e91; /* Coral peach */
 }
 
 textarea,
@@ -338,7 +370,7 @@ input[type="file"] {
 .submit-button {
     width: 99%;
     padding: 10px;
-    background-color: #3274d6;
+    background-color: #e79e91; /* Coral peach */
     border: 0;
     cursor: pointer;
     font-weight: bold;
@@ -347,7 +379,8 @@ input[type="file"] {
 }
 
 .submit-button:hover {
-    background-color: #2868c7;
+    background-color: #c68376; /* Darker coral peach */
+    transition: background-color 0.2s;
 }
 
 .custom-table {
@@ -357,7 +390,7 @@ input[type="file"] {
 }
 
 .custom-table, .custom-table th, .custom-table td {
-    border: 1px solid #cbcbcb;
+    border: 1px solid #d4c3b4; /* Light brown */
 }
 
 .custom-table th, .custom-table td {
@@ -368,19 +401,8 @@ input[type="file"] {
     vertical-align: middle;
 }
 
-/* .custom-table td.no-center {
-    text-align: left;
-    vertical-align: middle;
-} */
-
-.custom-table td.center-id {
-    text-align: center;
-    vertical-align: middle;
-    transform: translateX(10%);
-}
-
 .custom-table th {
-    background-color: #f2f2f2;
+    background-color: #f4ede7; /* Light peach */
 }
 
 .custom-table img {
@@ -389,6 +411,5 @@ input[type="file"] {
     border-radius: 5px;
     display: block;
     transform: translateX(0.55%);
-
     margin: 0 auto;
 }

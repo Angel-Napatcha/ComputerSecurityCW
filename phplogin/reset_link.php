@@ -4,35 +4,39 @@ session_start();
 // If the user is already logged in, redirect to the home page
 if ($_SESSION['loggedin']) {
     if ($_SESSION['user_type'] === 'admin') {
+        // Redirect admin users to the admin home page
         header('Location: admin_home.php');
-        exit;
     } else {
+        // Redirect regular users to the home page
         header('Location: home.php');
-        exit;
     }
+    exit;
 }
 
+// PHPMailer classes for email functionality
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
+// Database connection configuration
 $DATABASE_HOST = '127.0.0.1';
 $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
 $DATABASE_NAME = 'phplogin';
 
-// Try and connect using the info above.
+// Establish a connection to the database
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+
+// Exit if there is an error connecting to the database
 if (mysqli_connect_errno()) {
-    // If there is an error with the connection, stop the script and display the error.
     exit('Failed to connect to MySQL: ' . mysqli_connect_error());
 }
 
-if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+// Validate email format
+if (!filter_var(htmlspecialchars($_POST['email']), FILTER_VALIDATE_EMAIL)) {
     exit('Email is not valid!');
 }
 
@@ -80,7 +84,7 @@ $update_token_stmt->execute();
 $update_token_stmt->close();
 
 // Send password reset email
-$reset_link = 'http://localhost/phplogin/reset_password.php?email=' . urlencode($_POST['email']) . '&token=' . urlencode($token);
+$reset_link = 'http://localhost/phplogin/reset_password.php?email=' . $_POST['email'] . '&token=' . urlencode($token);
 $mail->setFrom($from, 'Lovejoy-Antique.com');
 $mail->addAddress($_POST['email']);
 $mail->isHTML(true);

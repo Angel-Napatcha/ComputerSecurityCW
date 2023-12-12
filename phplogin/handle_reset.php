@@ -2,6 +2,7 @@
 // Start or resume the session
 session_start();
 
+// PHPMailer classes for email functionality
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -9,21 +10,25 @@ require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
+// Database connection configuration
 $DATABASE_HOST = '127.0.0.1';
 $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
 $DATABASE_NAME = 'phplogin';
 
+// Establish a connection to the database
+$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+
+// reCAPTCHA configuration
 $secretKey = '6LdGDiwpAAAAAKaL68Q7TouTZP62BVUTqRK7H21d';
 $recaptchaResponse = $_POST['g-recaptcha-response'];
 
-// Try and connect using the info above.
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
+// Exit if there is an error connecting to the database
 if (mysqli_connect_errno()) {
     exit('Failed to connect to MySQL: ' . mysqli_connect_error());
 }
 
+// Validate reCAPTCHA response
 if (isset($recaptchaResponse) && !empty($recaptchaResponse)){
     $verificationUrl = 'https://www.google.com/recaptcha/api/siteverify';
     $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $recaptchaResponse;
@@ -79,18 +84,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if passwords match
     if ($_POST['new_password'] !== $_POST['confirm_password']) {
         // Redirect back to the reset password page with an error parameter
-        $email = urlencode($_POST['email']);
-        $token = urlencode($_POST['token']);
+        $email = htmlspecialchars($_POST['email']);
+        $token = htmlspecialchars($_POST['token']);
         header("Location: reset_password.php?email=$email&token=$token&error=nomatch");
         exit();
     }
 
-    $securityAnswer = $_POST['security_answer'];
+    // Retrieve the security answer from the user input
+    $securityAnswer = htmlspecialchars($_POST['security_answer']);
+
+    // Prepare and execute a database query to get the hashed security answer for the given email
     $checkSecurityStmt = $con->prepare('SELECT security_answer FROM accounts WHERE email = ?');
     $checkSecurityStmt->bind_param('s', $_POST['email']);
     $checkSecurityStmt->execute();
     $checkSecurityStmt->store_result();
 
+    // Check if the security answer is correct
     if ($checkSecurityStmt->num_rows > 0) {
         $checkSecurityStmt->bind_result($hashedSecurityAnswer);
         $checkSecurityStmt->fetch();
@@ -138,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Activation link has expired. Resend the link.
             echo 'The reset link has expired. ';
-            echo '<a href="?email=' . $_POST['email'] . '&token=' . $_POST['token'] . '&resend=true">Click here</a> to resend the reset password link.';
+            echo '<a href="?email=' . urlencode($_POST['email']) . '&token=' . $_POST['token'] . '&resend=true">Click here</a> to resend the reset password link.';
         }
     } else {
         // Reset link not found or already used.
