@@ -6,10 +6,10 @@ session_start();
 date_default_timezone_set('Europe/London');
 
 // Database connection configuration
-$DATABASE_HOST = '127.0.0.1';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'phplogin';
+$DATABASE_HOST = 'localhost';
+$DATABASE_USER = 'id21662357_lovejoys_antiqueuser';
+$DATABASE_PASS = '@Lovejoy1234';
+$DATABASE_NAME = 'id21662357_lovejoys_antique';
 
 // Establish a connection to the database
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);

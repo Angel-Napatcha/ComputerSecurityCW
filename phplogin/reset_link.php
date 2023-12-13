@@ -2,7 +2,7 @@
 session_start();
 
 // If the user is already logged in, redirect to the home page
-if ($_SESSION['loggedin']) {
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
     if ($_SESSION['user_type'] === 'admin') {
         // Redirect admin users to the admin home page
         header('Location: admin_home.php');
@@ -22,10 +22,10 @@ require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
 // Database connection configuration
-$DATABASE_HOST = '127.0.0.1';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'phplogin';
+$DATABASE_HOST = 'localhost';
+$DATABASE_USER = 'id21662357_lovejoys_antiqueuser';
+$DATABASE_PASS = '@Lovejoy1234';
+$DATABASE_NAME = 'id21662357_lovejoys_antique';
 
 // Establish a connection to the database
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
@@ -84,7 +84,7 @@ $update_token_stmt->execute();
 $update_token_stmt->close();
 
 // Send password reset email
-$reset_link = 'http://localhost/phplogin/reset_password.php?email=' . $_POST['email'] . '&token=' . urlencode($token);
+$reset_link = 'https://lovejoys-antique-249764.000webhostapp.com/reset_password.php?email=' . $_POST['email'] . '&token=' . urlencode($token);
 $mail->setFrom($from, 'Lovejoy-Antique.com');
 $mail->addAddress($_POST['email']);
 $mail->isHTML(true);

@@ -402,6 +402,12 @@ input[type="file"] {
     vertical-align: middle;
 }
 
+.custom-table td.center-id {
+    text-align: center;
+    vertical-align: middle;
+    transform: translateX(10%);
+}
+
 .custom-table th {
     background-color: #f4ede7; /* Light peach */
 }

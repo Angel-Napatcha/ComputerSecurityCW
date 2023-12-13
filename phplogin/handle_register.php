@@ -11,10 +11,10 @@ require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
 // Database connection configuration
-$DATABASE_HOST = '127.0.0.1';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'phplogin';
+$DATABASE_HOST = 'localhost';
+$DATABASE_USER = 'id21662357_lovejoys_antiqueuser';
+$DATABASE_PASS = '@Lovejoy1234';
+$DATABASE_NAME = 'id21662357_lovejoys_antique';
 
 // Establish a connection to the database
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
@@ -48,12 +48,12 @@ if (!filter_var(htmlspecialchars($_POST['email']), FILTER_VALIDATE_EMAIL)) {
 }
 
 // Validate username format using regular expression
-if (preg_match('/^[a-zA-Z0-9]+$/', htmlspecialchars($_POST['username'])) == 0) {
+if (preg_match('/^[a-zA-Z0-9]+$/', htmlspecialchars($_POST['username'])) === 0) {
     exit('Username is not valid!');
 }
 
 // Validate phone format
-if (!preg_match('/^[0-9-+\s()]*$"/', htmlspecialchars($_POST['telephone_no']))) {
+if (!preg_match('/^(?:\+\d{1,4}\s?)?\d{10,}$/', htmlspecialchars($_POST['telephone_no']))) {
     exit('Phone number is not valid!');
 }
 
@@ -96,8 +96,8 @@ if ($stmt = $con->prepare('INSERT INTO accounts (username, email, telephone_no, 
 
     // Generate a unique activation token
     $token = bin2hex(random_bytes(16));
-    // Check if the username is 'Admin' to determine admin role
-    $isAdmin = ($_POST['username'] === 'Admin') ? true : false;
+    // Check if the username is 'admin' to determine admin role
+    $isAdmin = ($_POST['username'] === 'admin') ? true : false;
     
     $stmt->bind_param('sssssssi', $_POST['username'], $_POST['email'], $_POST['telephone_no'], $password, $securityQuestion, $securityAnswer, $token, $isAdmin);
     $stmt->execute();
@@ -106,7 +106,7 @@ if ($stmt = $con->prepare('INSERT INTO accounts (username, email, telephone_no, 
     $stmt->close();
 
     // Send verification email
-    $activatation_link = 'http://localhost/phplogin/activate.php?email=' . $_POST['email'] . '&token=' . $token;
+    $activatation_link = 'https://lovejoys-antique-249764.000webhostapp.com/activate.php?email=' . $_POST['email'] . '&token=' . $token;
     $message = '<p>Please click the following link to activate your account: <a href="' . $activatation_link . '">' . $activatation_link . '</a></p>';
     $mail->Subject = $subject;
     $mail->Body = $message;

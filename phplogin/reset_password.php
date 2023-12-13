@@ -2,7 +2,7 @@
 session_start();
 
 // If the user is already logged in, redirect to the home page
-if ($_SESSION['loggedin']) {
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
     if ($_SESSION['user_type'] === 'admin') {
         // Redirect admin users to the admin home page
         header('Location: admin_home.php');
@@ -81,7 +81,6 @@ if ($_SESSION['loggedin']) {
                 alert('Please choose a stronger password.');
                 return false; // Prevent form submission
             }
-
             return true; // Allow form submission
         }
 
@@ -115,10 +114,10 @@ if ($_SESSION['loggedin']) {
         <form id="reset_password" action="handle_reset.php" method="post" onsubmit="return validatePassword()" autocomplete="off">
         <?php
             // Include your database connection code
-            $DATABASE_HOST = '127.0.0.1';
-            $DATABASE_USER = 'root';
-            $DATABASE_PASS = '';
-            $DATABASE_NAME = 'phplogin';
+            $DATABASE_HOST = 'localhost';
+            $DATABASE_USER = 'id21662357_lovejoys_antiqueuser';
+            $DATABASE_PASS = '@Lovejoy1234';
+            $DATABASE_NAME = 'id21662357_lovejoys_antique';
 
             // Try and connect using the info above.
             $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
@@ -137,8 +136,8 @@ if ($_SESSION['loggedin']) {
             $stmt->close();
             ?>
             
-            <input type="hidden" name="email" value="<?php echo htmlspecialchars($_GET['email']); ?>">
-            <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']); ?>">
+            <input type="hidden" name="email" value="<?php echo $_GET['email']; ?>">
+            <input type="hidden" name="token" value="<?php echo $_GET['token']; ?>">
             <!-- Form group new password -->
             <label for="new_password">New Password:</label>
             <input type="password" id="new_password" name="new_password" oninput="updatePasswordStrength()" required>

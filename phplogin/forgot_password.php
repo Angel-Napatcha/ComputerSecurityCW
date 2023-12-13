@@ -2,7 +2,7 @@
 session_start();
 
 // If the user is already logged in, redirect to the home page
-if ($_SESSION['loggedin']) {
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
     // Redirect to the appropriate home page based on user type
     if ($_SESSION['user_type'] === 'admin') {
         header('Location: admin_home.php');
